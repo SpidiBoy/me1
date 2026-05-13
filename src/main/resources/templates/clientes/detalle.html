@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(pageTitle='Detalle de Cliente', activePage='clientes', content=~{::main-content})}">
+<head><title>Detalle Cliente</title></head>
+<body>
+<th:block th:fragment="main-content">
+
+    <div class="toolbar">
+        <span class="section-title" th:text="'Detalle de: ' + ${cliente.nombre}">Detalle de Cliente</span>
+        <a th:href="@{/clientes}" class="btn">Volver</a>
+    </div>
+
+    <div class="card" style="margin-bottom: 20px;">
+        <h3>Información del Cliente</h3>
+        <p><strong>Nombre:</strong> <span th:text="${cliente.nombre}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${cliente.email ?: '—'}"></span></p>
+        <p><strong>Teléfono:</strong> <span th:text="${cliente.telefono ?: '—'}"></span></p>
+        <p><strong>Dirección:</strong> <span th:text="${cliente.direccion ?: '—'}"></span></p>
+    </div>
+
+    <div class="card" style="margin-bottom: 20px;">
+        <h3>Mascotas Registradas</h3>
+        <table th:if="${not #lists.isEmpty(cliente.mascotas)}">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Especie</th>
+                    <th>Raza</th>
+                    <th>Edad</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="m : ${cliente.mascotas}">
+                    <td th:text="${m.nombre}"></td>
+                    <td th:text="${m.especie}"></td>
+                    <td th:text="${m.raza ?: '—'}"></td>
+                    <td th:text="${m.edad ?: '—'}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <p th:if="${#lists.isEmpty(cliente.mascotas)}" style="color:#888;">No tiene mascotas registradas.</p>
+    </div>
+
+    <div class="card">
+        <h3>Historial de Citas</h3>
+        <table th:if="${not #lists.isEmpty(citas)}">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Mascota</th>
+                    <th>Servicio</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="c : ${citas}">
+                    <td th:text="${c.fecha}"></td>
+                    <td th:text="${c.hora}"></td>
+                    <td th:text="${c.mascota.nombre}"></td>
+                    <td th:text="${c.servicio.nombre}"></td>
+                    <td>
+                        <span th:text="${c.estado}"
+                              th:classappend="${c.estado == 'COMPLETADO' ? ' status--done' :
+                                               c.estado == 'EN_CURSO'   ? ' status--active' :
+                                               c.estado == 'CANCELADO'  ? ' status--cancel' : ' status--pending'}"
+                              class="status">—</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <p th:if="${#lists.isEmpty(citas)}" style="color:#888;">No tiene historial de citas.</p>
+    </div>
+
+</th:block>
+</body>
+</html>

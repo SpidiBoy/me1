@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout :: layout(pageTitle='Reprogramar cita', activePage='citas', content=~{::main-content})}">
+
+<head>
+    <title>Reprogramar cita</title>
+</head>
+
+<body>
+    <th:block th:fragment="main-content">
+
+        <div class="card form-card">
+            <h2 class="form-heading">Reprogramar cita</h2>
+
+            <!-- Aviso con fecha actual -->
+            <div
+                style="background:#fff8e1; border-left:4px solid #f9a825; border-radius:4px; padding:12px 16px; margin-bottom:20px;">
+                <p style="margin:0 0 4px 0;"><strong>Mascota:</strong>
+                    <span th:text="${cita.mascota.nombre}"></span>
+                    (<span th:text="${cita.mascota.especie}"></span>)
+                    — Dueño: <span th:text="${cita.mascota.cliente != null ? cita.mascota.cliente.nombre : '—'}"></span>
+                </p>
+                <p style="margin:0 0 4px 0;"><strong>Fecha actual:</strong>
+                    <span th:text="${cita.fecha}"></span> a las <span th:text="${cita.hora}"></span>
+                </p>
+                <p style="margin:0; color:#e65100;"
+                    th:if="${cita.vecesReprogramada != null and cita.vecesReprogramada > 0}">
+                    ⚠️ Esta cita ya fue reprogramada
+                    <strong th:text="${cita.vecesReprogramada}"></strong> vez(ces).
+                    Última razón: <em th:text="${cita.motivoReprogramacion ?: '—'}"></em>
+                </p>
+            </div>
+
+            <form th:action="@{/citas/{id}/reprogramar(id=${cita.id})}" method="post">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nuevaFecha">Nueva fecha</label>
+                        <input type="date" id="nuevaFecha" name="nuevaFecha" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="nuevaHora">Nueva hora</label>
+                        <input type="time" id="nuevaHora" name="nuevaHora" required />
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label for="motivo">Motivo del cambio</label>
+                        <input type="text" id="motivo" name="motivo"
+                            placeholder="Ej: cliente solicitó cambio, emergencia..." />
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Confirmar reprogramación</button>
+                    <a th:href="@{/citas}" class="btn">Cancelar</a>
+                </div>
+            </form>
+        </div>
+
+    </th:block>
+</body>
+
+</html>

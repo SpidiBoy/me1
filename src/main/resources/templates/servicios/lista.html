@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(pageTitle='Servicios', activePage='servicios', content=~{::main-content})}">
+<head><title>Servicios</title></head>
+<body>
+<th:block th:fragment="main-content">
+
+    <div class="toolbar">
+        <span class="section-title">Catálogo de servicios</span>
+        <a th:href="@{/servicios/nuevo}" class="btn btn-primary">+ Nuevo servicio</a>
+    </div>
+
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ícono</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Duración</th>
+                    <th>Precio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="s : ${servicios}">
+                    <td class="fs-4" th:text="${s.icono}">—</td>
+                    <td th:text="${s.nombre}">—</td>
+                    <td th:text="${s.descripcion}">—</td>
+                    <td th:text="${s.duracionMinutos} + ' min'">—</td>
+                    <td th:text="'S/ ' + ${s.precio}">—</td>
+                    <td>
+                        <a th:href="@{/servicios/{id}/editar(id=${s.id})}" class="btn btn-sm">Editar</a>
+                        <form th:action="@{/servicios/{id}/eliminar(id=${s.id})}" method="post" style="display:inline">
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('¿Eliminar servicio?')">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</th:block>
+</body>
+</html>

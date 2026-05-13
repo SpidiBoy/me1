@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(pageTitle='Mascotas', activePage='mascotas', content=~{::main-content})}">
+<head><title>Mascotas</title></head>
+<body>
+<th:block th:fragment="main-content">
+
+    <div class="toolbar">
+        <span class="section-title">Mascotas registradas</span>
+        <a th:href="@{/mascotas/nueva}" class="btn btn-primary">+ Nueva mascota</a>
+    </div>
+
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Especie</th>
+                    <th>Raza</th>
+                    <th>Tamaño</th>
+                    <th>Dueño</th>
+                    <th>Última visita</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="m : ${mascotas}">
+                    <td th:text="${m.nombre}">—</td>
+                    <td th:text="${m.especie}">—</td>
+                    <td th:text="${m.raza}">—</td>
+                    <td th:text="${m.tamano}">—</td>
+                    <td th:text="${m.cliente != null ? m.cliente.nombre : '—'}">—</td>
+                    <td th:text="${m.ultimaVisita != null ? m.ultimaVisita : '—'}">—</td>
+                    <td>
+                        <span th:text="${m.estado}"
+                              th:classappend="${m.estado == 'ACTIVO' ? ' status--active' : ' status--cancel'}"
+                              class="status">—</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/mascotas/{id}/editar(id=${m.id})}" class="btn btn-sm">Editar</a>
+                        <form th:action="@{/mascotas/{id}/eliminar(id=${m.id})}" method="post" style="display:inline">
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('¿Eliminar esta mascota?')">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(mascotas)}">
+                    <td colspan="8" style="text-align:center;color:#888">Sin mascotas registradas.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</th:block>
+</body>
+</html>

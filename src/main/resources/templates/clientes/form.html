@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout :: layout(pageTitle='Cliente', activePage='clientes', content=~{::main-content})}">
+
+<head>
+    <title>Cliente</title>
+</head>
+
+<body>
+    <th:block th:fragment="main-content">
+
+        <div class="toolbar">
+            <span class="section-title"
+                th:text="${cliente.id != null ? 'Editar cliente' : 'Registrar nuevo cliente'}">Cliente</span>
+            <a th:href="@{/clientes}" class="btn">← Volver a clientes</a>
+        </div>
+
+        <div class="card form-card">
+
+            <!-- Aviso informativo solo al crear -->
+            <div th:if="${cliente.id == null}"
+                style="background:#e8f4fd; border-left:4px solid #3b82f6; border-radius:6px;
+                       padding:12px 16px; margin-bottom:20px; font-size:13px; color:#1e40af;">
+                💡 Aquí solo registras los datos del <strong>dueño</strong>.
+                Una vez guardado, podrás agregar sus mascotas desde el detalle del cliente.
+            </div>
+
+            <form th:action="${cliente.id != null
+                                ? '/clientes/' + cliente.id + '/editar'
+                                : '/clientes/nuevo'}"
+                  th:object="${cliente}"
+                  method="post">
+
+                <div class="form-grid">
+
+                    <!-- Nombre -->
+                    <div class="form-group">
+                        <label for="nombre">Nombre completo *</label>
+                        <input type="text"
+                               id="nombre"
+                               th:field="*{nombre}"
+                               placeholder="Ej: Juan Pérez"
+                               required />
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email">Correo electrónico</label>
+                        <input type="email"
+                               id="email"
+                               th:field="*{email}"
+                               placeholder="Ej: juan@gmail.com" />
+                    </div>
+
+                    <!-- Teléfono -->
+                    <div class="form-group">
+                        <label for="telefono">Teléfono *</label>
+                        <input type="tel"
+                               id="telefono"
+                               th:field="*{telefono}"
+                               placeholder="Ej: 938 723 104"
+                               required />
+                    </div>
+
+                    <!-- Dirección -->
+                    <div class="form-group">
+                        <label for="direccion">Dirección</label>
+                        <input type="text"
+                               id="direccion"
+                               th:field="*{direccion}"
+                               placeholder="Ej: Jr. Las Flores 123, Lima" />
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary"
+                            th:text="${cliente.id != null ? 'Actualizar cliente' : 'Guardar cliente'}">
+                        Guardar
+                    </button>
+                    <a th:href="@{/clientes}" class="btn">Cancelar</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sección mascotas: SOLO visible al EDITAR (cliente ya existe) -->
+        <div th:if="${cliente.id != null}" style="margin-top: 24px;">
+            <div class="toolbar">
+                <span class="section-title">Mascotas de este cliente</span>
+                <!-- Redirige a /mascotas/nueva?clienteId=X para preseleccionar al dueño -->
+                <a th:href="@{/mascotas/nueva(clienteId=${cliente.id})}" class="btn btn-primary">
+                    + Agregar mascota
+                </a>
+            </div>
+
+            <div class="card">
+                <table th:if="${not #lists.isEmpty(cliente.mascotas)}">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Especie</th>
+                            <th>Raza</th>
+                            <th>Tamaño</th>
+                            <th>Edad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="m : ${cliente.mascotas}">
+                            <td th:text="${m.nombre}">—</td>
+                            <td th:text="${m.especie}">—</td>
+                            <td th:text="${m.raza ?: '—'}">—</td>
+                            <td th:text="${m.tamano ?: '—'}">—</td>
+                            <td th:text="${m.edad != null ? m.edad + ' años' : '—'}">—</td>
+                            <td>
+                                <a th:href="@{/mascotas/{id}/editar(id=${m.id})}" class="btn btn-sm">Editar</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div th:if="${#lists.isEmpty(cliente.mascotas)}"
+                     style="padding:20px; text-align:center; color:#888; font-size:13px;">
+                    Este cliente aún no tiene mascotas registradas.
+                    <br><br>
+                    <a th:href="@{/mascotas/nueva(clienteId=${cliente.id})}" class="btn btn-primary btn-sm">
+                        + Registrar primera mascota
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </th:block>
+</body>
+
+</html>

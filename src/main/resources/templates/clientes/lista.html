@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(pageTitle='Clientes', activePage='clientes', content=~{::main-content})}">
+<head><title>Clientes</title></head>
+<body>
+<th:block th:fragment="main-content">
+
+    <div class="toolbar">
+        <span class="section-title">Clientes registrados</span>
+        <a th:href="@{/clientes/nuevo}" class="btn btn-primary">+ Nuevo cliente</a>
+    </div>
+
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Mascotas</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="c : ${clientes}">
+                    <td th:text="${c.nombre}">—</td>
+                    <td th:text="${c.email ?: '—'}">—</td>
+                    <td th:text="${c.telefono ?: '—'}">—</td>
+                    <td th:text="${#lists.size(c.mascotas)}">0</td>
+                    <td>
+                        <a th:href="@{/clientes/{id}(id=${c.id})}" class="btn btn-sm">Ver</a>
+                        <a th:href="@{/clientes/{id}/editar(id=${c.id})}" class="btn btn-sm">Editar</a>
+                        <form th:action="@{/clientes/{id}/eliminar(id=${c.id})}" method="post" style="display:inline">
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('¿Eliminar cliente y todas sus citas?')">
+                                Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(clientes)}">
+                    <td colspan="5" style="text-align:center;color:#888">Sin clientes registrados.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</th:block>
+</body>
+</html>

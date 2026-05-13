@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(pageTitle='Servicio', activePage='servicios', content=~{::main-content})}">
+<head><title>Servicio</title></head>
+<body>
+<th:block th:fragment="main-content">
+
+    <div class="card form-card">
+        <h2 th:text="${servicio.id != null ? 'Editar servicio' : 'Nuevo servicio'}" class="form-heading">Servicio</h2>
+
+        <form th:action="${servicio.id != null ? '/servicios/' + servicio.id + '/editar' : '/servicios/nuevo'}"
+              th:object="${servicio}"
+              method="post">
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" th:field="*{nombre}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="icono">Ícono / Emoji</label>
+                    <select id="icono" th:field="*{icono}" required>
+                        <option value="" disabled selected>Selecciona un ícono...</option>
+                        <option value="🛁">🛁 Baño</option>
+                        <option value="✂️">✂️ Tijeras / Corte</option>
+                        <option value="💅">💅 Uñas</option>
+                        <option value="⭐">⭐ Estrella / Premium</option>
+                        <option value="🦷">🦷 Diente / Dental</option>
+                        <option value="🧼">🧼 Jabón / Limpieza</option>
+                        <option value="🚿">🚿 Ducha</option>
+                        <option value="🐶">🐶 Perro</option>
+                        <option value="🐱">🐱 Gato</option>
+                        <option value="🎀">🎀 Moño / Estética</option>
+                        <option value="🏥">🏥 Médico / Salud</option>
+                        <option value="🐾">🐾 Huella</option>
+                        <option value="❤️">❤️ Cuidado / Amor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="duracionMinutos">Duración (minutos)</label>
+                    <input type="number" id="duracionMinutos" th:field="*{duracionMinutos}" min="1" required/>
+                </div>
+                <div class="form-group">
+                    <label for="precio">Precio (S/)</label>
+                    <input type="number" step="0.01" id="precio" th:field="*{precio}" min="0" required/>
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label for="descripcion">Descripción</label>
+                    <textarea id="descripcion" th:field="*{descripcion}" rows="2" style="width: 100%; padding: 0.5rem;"></textarea>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a th:href="@{/servicios}" class="btn">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+</th:block>
+</body>
+</html>

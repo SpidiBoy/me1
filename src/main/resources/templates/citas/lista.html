@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout :: layout(pageTitle='Citas', activePage='citas', content=~{::main-content})}">
+
+<head><title>Citas</title></head>
+
+<body>
+<th:block th:fragment="main-content">
+
+<div class="toolbar">
+    <span class="section-title">Gestión de citas</span>
+    <a th:href="@{/citas/nueva}" class="btn btn-primary">+ Nueva cita</a>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Mascota</th>
+                <th>Dueño</th>
+                <th>Servicios</th>
+                <th>Total</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Responsable</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="c : ${citas}">
+                <td th:text="${c.mascota.nombre}">—</td>
+                <td th:text="${c.mascota.cliente != null ? c.mascota.cliente.nombre : '—'}">—</td>
+
+                <!-- Servicios: lista separada por coma con iconos -->
+                <td>
+                    <span th:each="s, iter : ${c.servicios}">
+                        <span th:text="${s.icono}"></span>
+                        <span th:text="${s.nombre}"></span><span th:if="${!iter.last}">, </span>
+                    </span>
+                    <span th:if="${c.servicios.isEmpty()}" style="color:#aaa;">—</span>
+                </td>
+
+                <!-- Total precio -->
+                <td style="font-weight:600; color:#3b6d11;"
+                    th:text="${c.servicios.isEmpty() ? '—' : 'S/ ' + c.totalPrecio}">—</td>
+
+                <td th:text="${c.fecha}">—</td>
+                <td th:text="${c.hora}">—</td>
+                <td th:text="${c.responsable ?: '—'}">—</td>
+                <td>
+                    <span th:text="${c.estado}"
+                          th:classappend="${c.estado == 'COMPLETADO' ? ' status--done'   :
+                                           c.estado == 'EN_CURSO'   ? ' status--active' :
+                                           c.estado == 'CANCELADO'  ? ' status--cancel' : ' status--pending'}"
+                          class="status">—</span>
+                </td>
+                <td style="white-space: nowrap;">
+
+                    <!-- Editar: PENDIENTE o EN_CURSO -->
+                    <a th:href="@{/citas/{id}/editar(id=${c.id})}"
+                       class="btn btn-sm"
+                       th:if="${c.estado == 'PENDIENTE' or c.estado == 'EN_CURSO'}"
+                       title="Editar cita">✏️ Editar</a>
+
+                    <!-- Iniciar: solo PENDIENTE -->
+                    <form th:action="@{/citas/{id}/iniciar(id=${c.id})}" method="post"
+                          style="display:inline"
+                          th:if="${c.estado == 'PENDIENTE'}">
+                        <button type="submit" class="btn btn-sm">▶ Iniciar</button>
+                    </form>
+
+                    <!-- Completar: PENDIENTE o EN_CURSO -->
+                    <form th:action="@{/citas/{id}/completar(id=${c.id})}" method="post"
+                          style="display:inline"
+                          th:if="${c.estado == 'PENDIENTE' or c.estado == 'EN_CURSO'}">
+                        <button type="submit" class="btn btn-sm">✔ Completar</button>
+                    </form>
+
+                    <!-- Reprogramar: solo PENDIENTE -->
+                    <a th:href="@{/citas/{id}/reprogramar(id=${c.id})}"
+                       class="btn btn-sm"
+                       th:if="${c.estado == 'PENDIENTE'}">📅 Reprogramar</a>
+
+                    <!-- Cancelar: si no está COMPLETADO ni CANCELADO -->
+                    <form th:action="@{/citas/{id}/cancelar(id=${c.id})}" method="post"
+                          style="display:inline"
+                          th:if="${c.estado != 'COMPLETADO' and c.estado != 'CANCELADO'}">
+                        <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('¿Cancelar esta cita?')">✖ Cancelar</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(citas)}">
+                <td colspan="9" style="text-align:center;color:#888;padding:20px;">
+                    Sin citas registradas.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</th:block>
+</body>
+</html>
